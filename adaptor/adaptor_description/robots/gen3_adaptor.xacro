@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<robot name="gen3_adaptor" xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <!-- Arguments -->
+    <xacro:arg name="arm" default="gen3" />
+    <xacro:arg name="dof" default="7" />
+    <xacro:arg name="vision" default="true" />
+
+    <xacro:arg name="gripper" default="adaptor_description" />
+
+    <xacro:arg name="sim" default="false" />
+    <xacro:arg name="prefix" default="" />
+
+    <xacro:include filename="$(find adaptor_description)/robots/kortex_robot.xacro" />
+    <xacro:load_robot arm="$(arg arm)" gripper="$(arg gripper)" dof="$(arg dof)" vision="$(arg vision)" sim="$(arg sim)" prefix="$(arg prefix)" />
+
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+    </gazebo>
+
+
+</robot>

@@ -1,0 +1,25 @@
+# Publish joint_states
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+gen3_adaptor_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+    - joint_6
+    - joint_7
+  state_publish_rate: 50
+  action_monitor_rate: 10
+  gains:
+    joint_1: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_2: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_3: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_4: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_5: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_6: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
+    joint_7: {p: 100.0, i: 0.0, d: 10.0, i_clamp: 1.0}
