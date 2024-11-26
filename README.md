@@ -7,4 +7,4 @@
 To spawn the FibroScan Probe Adaptor in Gazebo with a Kinova robot, use the following command:
 
 ```bash
-roslaunch adaptor_move_it_config demo_gazebo.launch
+roslaunch adaptor_description gazebo.launch
