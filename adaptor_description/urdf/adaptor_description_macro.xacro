@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot name="adaptor_model" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="load_gripper" params="parent prefix">
+    <xacro:include filename="$(find adaptor_description)/urdf/adaptor_description.xacro" />
+    <xacro:load_adaptor parent="${parent}" prefix="${prefix}" />
+  </xacro:macro>
+</robot>

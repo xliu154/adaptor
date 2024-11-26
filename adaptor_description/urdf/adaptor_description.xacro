@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="adaptor">
+
+  <xacro:macro name="load_adaptor" params="parent prefix">
+    
+    <joint name="${prefix}adaptor_base_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}adaptor_base_link"/>
+    </joint>
+
+    <link name="${prefix}adaptor_base_link">
+      <inertial>
+        <origin xyz="-0.0015897 0.0012554 0.03991" rpy="0 0 0" />
+        <mass value="0.3316" />
+        <inertia ixx="0.0001341" ixy="-5.884E-08" ixz="-8.1474E-08" iyy="0.00013588" iyz="7.6324E-10" izz="0.0002384" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://adaptor_description/meshes/adaptor_base_link.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://adaptor_description/meshes/adaptor_base_link.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}sensor_link">
+      <inertial>
+        <origin xyz="0.0048347 -2.1042E-05 0.033921" rpy="0 0 0" />
+        <mass value="0.0979" />
+        <inertia ixx="8.4795E-05" ixy="-4.7661E-08" ixz="6.9975E-07" iyy="0.00018165" iyz="4.4135E-09" izz="0.00024653" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://adaptor_description/meshes/sensor_link.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://adaptor_description/meshes/sensor_link.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}sensor_joint" type="fixed">
+      <origin xyz="0 0 0.06835" rpy="0 0 0" />
+      <parent link="${prefix}adaptor_base_link" />
+      <child link="${prefix}sensor_link" />
+    </joint>
+
+  </xacro:macro>
+
+</robot>
+
