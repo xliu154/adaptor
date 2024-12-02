@@ -82,7 +82,7 @@ for i in range(7):
 for i in range(7):
     J_omega[:, i] = diff(R[:, 2], q[i])
 
-J_total = J_v.row_join(J_omega)
+J_total = J_v.col_join(J_omega)
 
 J_func = lambdify(q, J_total, "numpy")
 T_total_func = lambdify(q, T_total, "numpy")
