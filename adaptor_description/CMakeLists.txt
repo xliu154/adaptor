@@ -7,7 +7,7 @@ find_package(catkin REQUIRED)
 catkin_package()
 
 catkin_install_python(PROGRAMS
-  scripts/resolved_rates.py
+  scripts/jacobian_pinv.py
   scripts/vel_control.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
