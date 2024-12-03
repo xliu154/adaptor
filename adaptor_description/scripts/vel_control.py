@@ -29,7 +29,7 @@ rospy.Subscriber("/target_pose", Float64MultiArray, target_pose_callback)
 
 joint_vel_pub = rospy.Publisher("/gen3_adaptor_controller/command", Float64MultiArray, queue_size=10)
 
-rate = rospy.Rate(30)
+rate = rospy.Rate(40)
 
 kv = 0.05
 kxi = 0.05
