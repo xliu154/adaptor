@@ -51,7 +51,7 @@ def euler_to_rotation_matrix(roll, pitch, yaw):
     return R
 
 
-v_max = 0.1
+v_max = 0.08
 v_min = 0.005
 omega_max = 0.08
 omega_min = 0.005
