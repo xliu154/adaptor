@@ -3,12 +3,10 @@
 import rospy
 import numpy as np
 import time
+import math
 from sympy import symbols, cos, sin, Matrix, lambdify, diff
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
-from scipy.spatial.transform import Rotation as R
-import math
-from tf.transformations import quaternion_from_matrix
 
 rospy.init_node("jacobian_pinv", anonymous=True)
 
@@ -75,7 +73,7 @@ T7P = Matrix([
     [0, -1, 0, 0],
     [0, 0, -1, -0.0615],
     [0, 0, 0, 1]
-])    # T7P is end_effector_joint to gripper, currently (0, 0, -0.0615) m
+])    # T7P is end_effector_joint to adaptor, currently (0, 0, -0.0615) m
 
 T_list = [BT1, T12, T23, T34, T45, T56, T67, T7P]
 T_total = BT1 * T12 * T23 * T34 * T45 * T56 * T67 * T7P
@@ -122,4 +120,3 @@ while not rospy.is_shutdown():
         position_pub.publish(position_msg)
 
     rate.sleep()
-
