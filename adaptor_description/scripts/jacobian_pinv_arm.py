@@ -8,7 +8,7 @@ from sympy import symbols, cos, sin, Matrix, lambdify, diff
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 
-rospy.init_node("jacobian_pinv", anonymous=True)
+rospy.init_node("jacobian_pinv_arm", anonymous=True)
 
 q1, q2, q3, q4, q5, q6, q7 = symbols("q1 q2 q3 q4 q5 q6 q7")
 q = [q1, q2, q3, q4, q5, q6, q7]
