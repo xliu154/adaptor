@@ -3,19 +3,21 @@
 import rospy
 import numpy as np
 import time
+import math
 from sympy import symbols, cos, sin, Matrix, lambdify, diff
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
-from scipy.spatial.transform import Rotation as R
-import math
-from tf.transformations import quaternion_from_matrix
 
 rospy.init_node("jacobian_pinv", anonymous=True)
 
-# Transformation matrix and Jacobian matrix symbolic
-# define joint states and direct kinematics chain
 q1, q2, q3, q4, q5, q6, q7 = symbols("q1 q2 q3 q4 q5 q6 q7")
 q = [q1, q2, q3, q4, q5, q6, q7]
+T_prev = Matrix.eye(4)
+J_v = Matrix.zeros(3, 7)
+J_o = Matrix.zeros(3, 7)
+rho = 1e-6
+identity_matrix = np.eye(6)
+current_joint_positions = None
 
 BT1 = Matrix([
     [cos(q1), -sin(q1),  0,      0],
@@ -71,55 +73,42 @@ T7P = Matrix([
     [0, -1, 0, 0],
     [0, 0, -1, -0.0615],
     [0, 0, 0, 1]
-])    # T7P is end_effector_joint to gripper, currently (0, 0, -0.0615) m
+])    # T7P is end_effector_joint to adaptor, currently (0, 0, -0.0615) m
 
-# Initialize parameters
-J_v = Matrix.zeros(3, 7) # velocity Jacobian and angle velocity Jacobian 
-J_o = Matrix.zeros(3, 7)
-T_prev = Matrix.eye(4) # previous T
-T_list = [BT1, T12, T23, T34, T45, T56, T67, T7P] # list all T
-T_total = BT1 * T12 * T23 * T34 * T45 * T56 * T67 * T7P # total transformation
-p_end = T_total[:3, 3] # end effector position
+T_list = [BT1, T12, T23, T34, T45, T56, T67, T7P]
+T_total = BT1 * T12 * T23 * T34 * T45 * T56 * T67 * T7P
+p_end = T_total[:3, 3]
 
 for i in range(7):
-    T_prev = T_prev * T_list[i] # update current T
-    z_prev = T_prev[:3, 2] # update z axis 
-    p_prev = T_prev[:3, 3] # update frame position
-    J_v[:, i] = z_prev.cross(p_end - p_prev) # The cross product of the joint axis direction z_prev and the difference between the end and joint positions
-    J_o[:, i] = z_prev # rotary joints therefore current z axis direction z_prev
+    T_prev = T_prev * T_list[i]
+    z_prev = T_prev[:3, 2]
+    p_prev = T_prev[:3, 3]
+    J_v[:, i] = z_prev.cross(p_end - p_prev)
+    J_o[:, i] = z_prev
 
 J_total = J_v.col_join(J_o)
-
-# combine, J_total = [J_v; J_o]
 J_func = lambdify(q, J_total, "numpy")
 T_total_func = lambdify(q, T_total, "numpy")
-
-# initialize pseudo inverse parameters
-rho = 1e-6
-current_joint_positions = None
 
 def joint_states_callback(data):
     global current_joint_positions
     current_joint_positions = np.array(data.position)
-
 rospy.Subscriber("/joint_states", JointState, joint_states_callback)
 
-# this script will publish robot current end effector jacobian pesudo inverse and position
 j_pseudo_pub = rospy.Publisher("/resolved_rates/j_pseudo", Float64MultiArray, queue_size=10)
 position_pub = rospy.Publisher("/resolved_rates/direct_kinematics", Float64MultiArray, queue_size=10)
+rate = rospy.Rate(40)
 
-rate = rospy.Rate(40) # publish frequency
-last_log_time = time.time()
+def cal_J_pseudo(q_values, rho, identity_matrix):
+    J_numeric = J_func(*q_values)
+    J_transpose = J_numeric.T
+    J_pseudo = J_transpose @ np.linalg.inv(J_numeric @ J_transpose + rho * identity_matrix)
+    return J_pseudo
 
-# Main Loop
 while not rospy.is_shutdown():
     if current_joint_positions is not None:
         q_values = current_joint_positions
-        J_numeric = J_func(*q_values)
-        J_transpose = J_numeric.T
-        identity_matrix = np.eye(J_numeric.shape[0])
-        J_pseudo = J_transpose @ np.linalg.inv(J_numeric @ J_transpose + rho * identity_matrix)
-        
+        J_pseudo = cal_J_pseudo(q_values, rho, identity_matrix)
         T_numeric = T_total_func(*q_values)
         
         j_pseudo_msg = Float64MultiArray()
