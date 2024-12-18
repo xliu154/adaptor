@@ -8,7 +8,6 @@ catkin_package()
 
 catkin_install_python(PROGRAMS
   scripts/velocity_control_gazebo.py
-  scripts/jacobian_pinv_arm.py
   scripts/velocity_control_arm.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
